@@ -1,0 +1,43 @@
+.custom-textarea {
+    --sds-c-textarea-sizing-min-height:40px;
+}
+
+.remove-btn{
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.cutomer-message-container{
+    margin-top: 39px;
+}
+
+.customer-textarea{
+    --sds-c-textarea-sizing-min-height:100px;
+}
+
+.right-container{
+    /* margin-top: 73px; */
+    
+}
+.margin-top{
+    margin-top: 15px;
+}
+.items-container{
+    background-color: #ffe8c6;
+    box-shadow: -2px 2px 8px 2px hsla(0, 0%, 0%, 0.2);
+}
+
+.cutomer-message-container{
+    background-color: #ffe8c6;
+    box-shadow: -2px 2px 8px 2px hsla(0, 0%, 0%, 0.2);
+}
+.white-color{
+    background-color: #ffe8c6;
+    box-shadow: -2px 2px 8px 2px hsla(0, 0%, 0%, 0.2);
+}
+
+.orange-cl{
+    background-color:  #fcc99e;
+    box-shadow: -2px 2px 8px 2px hsla(0, 0%, 0%, 0.2);
+}
+

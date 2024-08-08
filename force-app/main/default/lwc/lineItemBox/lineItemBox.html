@@ -1,0 +1,49 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-07-2024
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <div class="items-container slds-box slds-box_xx-small">
+        <div class="box-inputs">
+            <lightning-input name="itemName" type="text" label="Item Name"
+                onchange={handleInputChange}></lightning-input>
+            <div class="input-container">
+                <template lwc:if={getSelectedTemplateInputs}>
+                    <div class="hour-input slds-grid slds-gutters">
+                        <lightning-input type="number" label="Line Item Amount" name="lineItemAmount" class="slds-col slds-size_1-of-3"
+                            onchange={handleInputChange}></lightning-input>
+                        <lightning-combobox label="Discount" name="discountPicklist" class="slds-col slds-size_1-of-3"
+                            options={totalInvoiceDiscountPicklist} required="true"
+                            onchange={handlePicklistChange}></lightning-combobox>
+                    </div>
+                </template>
+                <template lwc:else>
+                    <div class="amount-input slds-grid slds-gutters">
+                        <lightning-input type="number" label="Quantity" name="Quantity" class="slds-col slds-size_1-of-3" onchange={handleInputChange}></lightning-input>
+                        <lightning-input  type="number" label="Price" name="Price" class="slds-col slds-size_1-of-3" onchange={handleInputChange}></lightning-input>
+                        <lightning-combobox label="Discount" name="discountPicklist"
+                        class="slds-col slds-size_1-of-3"
+                            options={totalInvoiceDiscountPicklist} required="true"
+                            onchange={handlePicklistChange}></lightning-combobox>
+                    </div>
+                </template>
+            </div>
+            <lightning-input type="text" label="SAC/HSN" name="SAC/HSN" onchange={handleInputChange}></lightning-input>
+            <lightning-textarea class="custom-textarea" label="Description" name="description" onchange={handleInputChange}></lightning-textarea>
+        </div>
+        <div class="box-footer">
+            <lightning-layout>
+                <lightning-layout-item size="6">
+                    <p><strong>Amount: </strong></p>
+                </lightning-layout-item>
+                <lightning-layout-item size="6" class="remove-btn">
+                    <lightning-button name="removeBox" icon-name='utility:recycle_bin_empty' size='medium' variant="base" label="Remove" data-id={it.boxId} onclick={removeLineItems}></lightning-button>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+        <lightning-button icon-name='utility:insert_template' size='medium' variant="base" label="Add Item" onclick={addMoreItem}></lightning-button>
+    </div>
+</template>

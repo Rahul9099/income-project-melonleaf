@@ -1,0 +1,215 @@
+<!--
+  @description       : 
+  @author            : ChangeMeIn@UserSettingsUnder.SFDoc
+  @group             : 
+  @last modified on  : 08-08-2024
+  @last modified by  : ChangeMeIn@UserSettingsUnder.SFDoc
+-->
+<template>
+    <div class="slds-box slds-box_xx-small">
+        <div style="background-color: #fff6d9;">
+            <div class="slds-grid slds-gutters">
+
+                <!-- Left part of Invoice component -->
+                <div class="left-container slds-box slds-box_xx-small slds-col slds-size_8-of-12">
+                    <lightning-combobox class="white-color slds-box slds-box_xx-small" label="Line Item Template" name="lineItemTemplatePicklist"
+                        options={lineItemTemplate} required="true" value={selectedTemplate}
+                        onchange={handlePicklistChange}></lightning-combobox>
+
+                    <h4>items</h4>
+                    <!-- Input main dynamic boxes start here -->
+                    <template for:each={boxItemsArray} for:item="it">
+                        <div class="items-container slds-box slds-box_xx-small" key={it.boxId}>
+                            <div class="box-inputs">
+                                <lightning-input name="Item_Name__c" type="text" label="Item Name"
+                                    value={it.Item_Name__c} onchange={handleInputChange}
+                                    data-id={it.boxId}></lightning-input>
+                                <div class="input-container">
+                                    <template lwc:if={getSelectedTemplateInputs}>
+                                        <div class="hour-input slds-grid slds-gutters">
+                                            <lightning-input type="number" label="Line Item Amount"
+                                                name="Line_Item_Amount__c" value={it.Line_Item_Amount__c}
+                                                class="slds-col slds-size_1-of-3" data-id={it.boxId}
+                                                onchange={handleInputChange}></lightning-input>
+                                            <lightning-combobox label="Discount" name="Line_Item_Discounts__c"
+                                                class="slds-col slds-size_1-of-3" data-id={it.boxId} 
+                                                options={totalInvoiceDiscountPicklist} required="true"
+                                                value={it.Line_Item_Discounts__c}
+                                                onchange={handleInputChange}></lightning-combobox>
+                                                <template if:true={discountPercentageInput}>
+                                                    <lightning-input type="number" label="Discount percentage value"
+                                                    name="discountPercentageValue" value={it.Discount_Amount__c}
+                                                    class="slds-col slds-size_1-of-3" data-id={it.boxId}
+                                                    onchange={handleInputChange}></lightning-input>
+                                                </template>
+                                                <template if:true={discountAmountInput}>
+                                                    <lightning-input type="number" label="Discount Amount value"
+                                                    name="discountAmountValue" value={it.Discount_Amount__c}
+                                                    class="slds-col slds-size_1-of-3" data-id={it.boxId}
+                                                    onchange={handleInputChange}></lightning-input>
+                                                </template>
+                                        </div>
+                                    </template>
+                                    <template lwc:else>
+                                        <div class="amount-input slds-grid slds-gutters">
+                                            <lightning-input type="number" label="Quantity" name="Quantity__c"
+                                                value={it.Quantity__c} class="slds-col slds-size_1-of-3"
+                                                onchange={handleInputChange} data-id={it.boxId}></lightning-input>
+                                            <lightning-input type="number" label="Price" name="Rate__c"
+                                                value={it.Rate__c} class="slds-col slds-size_1-of-3"
+                                                onchange={handleInputChange} data-id={it.boxId}></lightning-input>
+                                            <lightning-combobox label="Discount" name="discountPicklist"
+                                                data-id={it.boxId} class="slds-col slds-size_1-of-3"
+                                                options={totalInvoiceDiscountPicklist} required="true"
+                                                onchange={handlePicklistChange}></lightning-combobox>
+                                            <template if:true={discountPercentageInput}>
+                                                    <lightning-input type="number" label="Discount percentage value"
+                                                    name="discountPercentageValue" value={it.Discount_Amount__c}
+                                                    class="slds-col slds-size_1-of-3" data-id={it.boxId}
+                                                    onchange={handleInputChange}></lightning-input>
+                                            </template>
+                                            <template if:true={discountAmountInput}>
+                                                    <lightning-input type="number" label="Discount Amount value"
+                                                    name="discountAmountValue" value={it.Discount_Amount__c}
+                                                    class="slds-col slds-size_1-of-3" data-id={it.boxId}
+                                                    onchange={handleInputChange}></lightning-input>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                                <lightning-input type="text" label="SAC/HSN" value={it.SAC_HSN__c} name="SAC_HSN__c"
+                                    onchange={handleInputChange} data-id={it.boxId}></lightning-input>
+                                <lightning-textarea class="custom-textarea" label="Description" name="Description__c"
+                                    value={it.Description__c} onchange={handleInputChange}
+                                    data-id={it.boxId}></lightning-textarea>
+                            </div>
+                            <div class="box-footer">
+                                <lightning-layout>
+                                    <lightning-layout-item size="6">
+                                        <p><strong>Amount: </strong> <span>{it.Per_Line_Item_Amount__c}</span></p>
+                                    </lightning-layout-item>
+                                    <lightning-layout-item size="6" class="remove-btn">
+                                        <lightning-button name="removeBox" icon-name='utility:recycle_bin_empty'
+                                            size='medium' variant="base" label="Remove" data-id={it.boxId}
+                                            onclick={removeLineItems}></lightning-button>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                            </div>
+                            <lightning-button icon-name='utility:insert_template' size='medium' variant="base"
+                                label="Add Item" onclick={addMoreItem}></lightning-button>
+                        </div>
+                    </template>
+                    <!-- Input main dynamic boxes end here -->
+                    <div class="cutomer-message-container slds-box slds-box_xx-small">
+                        <lightning-textarea class="customer-textarea" label="Message to customer"
+                            onchange={messageToCustomer}></lightning-textarea>
+                    </div>
+                </div>
+                <!-- Left part End here -->
+
+                <!-- Right part of billing component -->
+                <div class="right-container slds-col slds-size_4-of-12">
+                    <div class="detail-container slds-box slds-box_xx-small">
+                        <!-- Hourly -->
+                        <div>
+                            <lightning-icon icon-name='utility:holiday_operating_hours' alternative-text='holiday_operating_hours' variant='warning' size='medium' title='holiday_operating_hours'></lightning-icon>
+                            <Span><Strong>Total Hourly Items:-</Strong><strong class=".slds-float_right">{totalHourlyItems}</strong></Span>
+                        </div>
+                        <!-- Amount -->
+                         <div>
+                             <lightning-icon icon-name='utility:money' alternative-text='money' variant='success' size='medium' title='money'></lightning-icon>
+                             <Span><Strong>Total Amount Items:-</Strong><strong class=".slds-float_right">{totalAmountItems}</strong></Span>
+                         </div>
+                    </div>
+                    <div class="slds-box orange-cl margin-top">
+                        <div class="slds-grid slds-wrap" style="margin-left: -15px;">
+                            <div class="slds-col slds-large-size_6-of-12 slds-medium-size_6-of-12 slds-size_6-of-12">
+                                <span><b>Invoice Number :-</b></span>
+                            </div>
+                            <div class="slds-col slds-large-size_6-of-12 slds-medium-size_6-of-12 slds-size_6-of-12"
+                                style="text-align: right;">
+                                <span>{invoiceName}</span>
+                            </div>
+
+                            <div class="slds-col slds-large-size_12-of-12 slds-medium-size_12-of-12 slds-size_12-of-12"
+                                style="margin-top: 10px;"></div>
+
+                            <div class="slds-col slds-large-size_6-of-12 slds-medium-size_6-of-12 slds-size_6-of-12">
+                                <span><b>Invoice Date :-</b></span>
+                            </div>
+                            <div class="slds-col slds-large-size_6-of-12 slds-medium-size_6-of-12 slds-size_6-of-12"
+                                style="text-align: right;">
+                                <span>{invoiceDate}</span>
+                            </div>
+
+                            <div class="slds-col slds-large-size_12-of-12 slds-medium-size_12-of-12 slds-size_12-of-12"
+                                style="margin-top: 10px;"></div>
+
+                            <div class="slds-col slds-large-size_6-of-12 slds-medium-size_6-of-12 slds-size_6-of-12">
+                                <span><b>Payment Due :-</b></span>
+                            </div>
+                            <div class="slds-col slds-large-size_6-of-12 slds-medium-size_6-of-12 slds-size_6-of-12"
+                                style="text-align: right;">
+                                <span>{paymentDue}</span>
+                            </div>
+
+                            <div class="slds-col slds-large-size_12-of-12 slds-medium-size_12-of-12 slds-size_12-of-12"
+                                style="margin-top: 10px;"></div>
+
+                            <div class="slds-col slds-large-size_6-of-12 slds-medium-size_6-of-12 slds-size_6-of-12">
+                                <span><b>Subtotal :-</b></span>
+                            </div>
+                            <div class="slds-col slds-large-size_6-of-12 slds-medium-size_6-of-12 slds-size_6-of-12"
+                                style="text-align: right;">
+                                <span>{subtotalValue}</span>
+                            </div>
+                        </div>
+
+                        <br>
+                        <lightning-combobox label="Total Invoice Discount" name="total invoice discount"
+                            placeholder="Total Invoice Discount" options={totalInvoiceDiscountPicklist}
+                            onchange={handleTotalDiscountChange} value={discountValue}>
+                        </lightning-combobox> <br>
+
+                        <div>
+                            <template if:true={isTotalDiscountAmount}>
+                                <lightning-input label="Amount" name="totalDiscountAmount"
+                                    placeholder="Enter Discount Amount" value={totalDiscountAmount}
+                                    onchange={handleTotalDiscountAmountChange}>
+                                </lightning-input>
+                            </template>
+
+                            <template if:true={isTotalDiscountPercentage}>
+                                <lightning-input label="Percentage" name="totalDiscountPercentage"
+                                    placeholder="Enter Discount Percentage" value={totalDiscountPercentage}
+                                    onchange={handleTotalDiscountPercentageChange}>
+                                </lightning-input>
+                            </template>
+                        </div><br>
+
+                        <lightning-combobox label="Tax" name="tax" placeholder="Select the Tax" value={tax}
+                            options={taxPicklist} onchange={handleTaxChange}>
+                        </lightning-combobox> <br>
+
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-large-size_6-of-12 slds-medium-size_6-of-12 slds-size_6-of-12">
+                                <span><b>Total :-</b></span>
+                            </div>
+                            <div class="slds-col slds-large-size_6-of-12 slds-medium-size_6-of-12 slds-size_6-of-12"
+                                style="text-align: right;">
+                                <span>{NettotalAmount}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right part start here -->
+            </div>
+        </div>
+        <div class="slds-modal__footer">
+            <lightning-button class="slds-m-top_small" variant="Neutral" type="button" name="Cancel" label="Cancel"
+                onclick={closeAction}></lightning-button>
+            <lightning-button variant="brand" label="Save" class="slds-m-left_x-small" onclick={handleSave}
+                disabled={isDisable}></lightning-button>
+        </div>
+    </div>
+</template>
